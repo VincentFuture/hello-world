@@ -26,7 +26,7 @@ int main()
 	void sort_3(int a[],int);
 	void sort_4(int a[],int);
 	void sort_5(int a[],int,int);
-
+	
 	int i,j;			//定义计数变量
 	
 	//printf("%d\n",sizeof(x));  //■为2个字节 
@@ -34,7 +34,6 @@ int main()
 	srand((unsigned)time(NULL));
 	for(i=0;i<N;i++)
 	{		
-		
 		//printf("array[%d]=%d\n",i+1,a[i]);		
 		do{
 			a[i]=(rand()%M);
@@ -64,7 +63,6 @@ int main()
 		printf("%d seconds to start sorting....\r",i);
 		Sleep(1000);
 	}	  
-	
 	/*----开始排序-----*/ 
 	for(i=1;i<=5;i++) 
 	{
@@ -73,7 +71,6 @@ int main()
 		print_x(xx,j,0);	
 		choose(i);	
 	}
-	
 	printf("完美→.→\n"); 
 	for(i=3;i>=1;i--)
 	{
@@ -88,7 +85,6 @@ void save_x(char (*x)[2*M],int dex,int n)
 	int i,j;
 	for(i=0;i<n;i++)	
 		x[dex][i]='>'; 
-
 	x[dex][i]='\0';
 }
 
@@ -97,8 +93,7 @@ void print_x(char (*x)[2*M],int dex,int mark)
 	if(mark!=0&&dex==mark)
 		color(12);
 	else
-		color(6);
-			
+		color(6);		
 	printf("%s",x[dex]);			
 	printf("\n");
 }
@@ -203,7 +198,6 @@ void sort_4(int a[],int n)
 		a[iPos+1]=iTemp;//将当前值(较小值的元素)插入
 		fun_sort(pos);		//输出排序结果
 	}//每次将较小值元素插入，即完成了一次排序
-	
 }
 /*-----折半法-----*/
 /*思想：
@@ -220,8 +214,7 @@ void sort_5(int a[],int left,int right)
 	j=right;
 	middle=a[(left+right)/2];//计算中间值
 	do
-	{
-		
+	{	
 		while((a[i]<middle)&&(i<right))//从左开始找比中值值小的元素
 		{
 			i++;
@@ -255,7 +248,6 @@ void fun_sort(int _mark)
 {	
 	int i;
 	system("cls");
-
 		for(i=0;i<N;i++)
 		{	
 			save_x(x,i,a[i]) ;	
@@ -329,8 +321,3 @@ void saveinitial(int aa_[N],char (*xx_)[2*M],int flag)
 		 } 
 	}
 }
-	
-	
-	
-	
- 
