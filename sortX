@@ -1,0 +1,336 @@
+/*该实例集合了慕课版上的五种排序*/
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include<windows.h>
+#include<string.h> 
+#define N 30	//测试组数
+#define M 35	//方块最大长度
+				//M>N
+				 
+HANDLE hOut;
+
+char x[N][2*M],xx[N][2*M];  //存放方块图案,x用于改变，xx保存初始状态 
+int a[N],aa[N];		//长度为9的数组，a用于改变，aa用于保存初始态 
+void print_x(char (*x)[2*M],int dex,int mark);//用于打印方块■
+void save_x(char (*x)[2*M],int dex,int n);
+void saveinitial(int aa_[N],char (*xx_)[2*M],int flag);
+void fun_sort(int _mark);
+void choose(int choose_i);
+int color(int c);
+int main()
+{
+	/*将数组的元素按从小到大排序的五种排序方式*/
+	void sort_1(int a[],int);
+	void sort_2(int a[],int);
+	void sort_3(int a[],int);
+	void sort_4(int a[],int);
+	void sort_5(int a[],int,int);
+
+	int i,j;			//定义计数变量
+	
+	//printf("%d\n",sizeof(x));  //■为2个字节 
+	/*------为数组赋值------*/
+	srand((unsigned)time(NULL));
+	for(i=0;i<N;i++)
+	{		
+		
+		//printf("array[%d]=%d\n",i+1,a[i]);		
+		do{
+			a[i]=(rand()%M);
+			for(j=0;j<i;j++)
+			{
+				if(a[i]==a[j]||a[i]==0)						
+					break; 								
+			 } 			
+		}while(j<i);
+	}
+	
+	//printf("[1]:选择法 [2]:冒泡法 [3]:交换法 [4]:插入法 [5]:折半法\n");
+	//存储方块，打印初始状态 
+	for(i=0;i<N;i++)		
+	{
+		save_x(x,i,a[i]) ;				
+		print_x(x,i,0);		
+	}
+	/*-----保存初始状态(初始化flag等于0----*/
+	saveinitial(a,x,0); 
+	
+	printf("press Enter!\n");
+	 
+	getchar();//接收回车
+	for(i=3;i>0;i--)
+	{
+		printf("%d seconds to start sorting....\r",i);
+		Sleep(1000);
+	}	  
+	
+	/*----开始排序-----*/ 
+	for(i=1;i<=5;i++) 
+	{
+		system("cls");
+		for(j=0;j<N;j++)
+		print_x(xx,j,0);	
+		choose(i);	
+	}
+	
+	printf("完美→.→\n"); 
+	for(i=3;i>=1;i--)
+	{
+		printf("%d seconds over...\r",i);	
+		Sleep(1000);
+	}
+return 0;
+}
+
+void save_x(char (*x)[2*M],int dex,int n)
+{
+	int i,j;
+	for(i=0;i<n;i++)	
+		x[dex][i]='>'; 
+
+	x[dex][i]='\0';
+}
+
+void print_x(char (*x)[2*M],int dex,int mark)
+{	
+	if(mark!=0&&dex==mark)
+		color(12);
+	else
+		color(6);
+			
+	printf("%s",x[dex]);			
+	printf("\n");
+}
+
+int color(int c)
+{
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),c);
+	return 0;
+}
+
+/*-----选择法-----*/
+/*思想：
+*每次选择所要排序数组中的最小值的数组元素，
+*将这个数组元素的值与最前面没有进行排序的元素的值互换
+*/
+void sort_1(int a[],int n)
+{
+	int i,j,iTemp,iPos,pos;//定义变量
+	for(i=0;i<n-1;i++)//外层循环0~n-2(最后一个元素的下标为n-1)，因为最后一个元素后面没有元素可以比较，即最后留下的元素一定是最大的
+	{
+		iTemp=a[i];//中间变量记录当前元素的值
+		iPos=i;//记录当前位置
+		for(j=i+1;j<n;j++)//内层循环i+1~n-1,即将当前元素后面的元素一一与之比较
+		{
+			if(a[j]<iTemp)//若存在比当前元素的值小的元素，则作为最小值
+			{
+				pos=j;
+				iTemp=a[j];//则中间变量记录这个最小值
+				iPos=j;//记录这个值最小的元素的位置
+			}
+		}//通过内层循环找到当前位置后面更小的值的元素后 
+		a[iPos]=a[i];//将其互换
+		a[i]=iTemp;//最小值给了当前位置，即完成了一次排序
+		fun_sort(pos);		//输出排序结果 
+	}
+}
+/*------冒泡法-----*/
+/*思想：
+*在排序时，每次比较相邻数组元素的值
+*将较小的数排在较大的数前面
+*/
+void sort_2(int a[],int n)
+{
+	int i,j,iTemp,pos;//定义变量
+	for(i=1;i<n;i++)//外层循环1~n-1，
+	{
+		for(j=n-1;j>=i;j--)//内层循环n-1~i，从最后一个元素开始
+		{
+			if(a[j]<a[j-1])//将其与前面一个元素比较，即相邻的两个元素一一比较，若前一个元素的值大于后一个元素的值
+			{
+				pos=j;
+				iTemp=a[j];//则与之互换，将值小的元素排在前面
+				a[j]=a[j-1];
+				a[j-1]=iTemp;
+			}//将后面未排序的元素中值最小的元素换到未排序的元素的第一个位置，即完成一次排序
+			fun_sort(pos);		//输出排序结果
+		}
+	}
+}
+/*-----交换法-----*/
+/*思想：
+*将每一位数与其后的所有数一一比较
+*如果发现符合条件的数据，则交换数据
+*/
+void sort_3(int a[],int n)
+{
+	int i,j,iTemp,pos;//定义变量
+	for(i=0;i<n-1;i++)//外层循环0~n-2(最后一个元素的下标为n-1)，原因类似选择法
+	{
+		for(j=i+1;j<n;j++)//内层循环i+1~n-1,即将当前元素的后面每个元素与当前元素进行比较
+		{
+			if(a[j]<a[i])//若后面的某个元素比当前元素小
+			{
+				pos=j;
+				iTemp=a[i];//则将其互换
+				a[i]=a[j];
+				a[j]=iTemp;
+			}//每次将值较小的元素放到未排序元素的第一个，即完成一次排序
+			fun_sort(pos);		//输出排序结果
+		}
+	}
+}
+/*-----插入法-----*/
+/*思想：
+*抽出数据，寻找前面符合条件的位置插入
+*然后继续下一个数据
+*直到完成排序
+*/
+void sort_4(int a[],int n)
+{
+	int iPos,iTemp,i,pos;//定义变量
+	for(i=1;i<n;i++)//外层循环1~n-1，
+	{
+		iTemp=a[i];//记录当前值
+		iPos=i-1;//选择标记插入点
+		while((iPos>=0)&&(iTemp<a[iPos]))//寻找插入点，当标记的插入点的元素的值大于当前值
+		{
+			a[iPos+1]=a[iPos];//就将插入点以后的元素都往后移一个位置
+			iPos--;//移动插入点标记
+		}//内层循环结束，即找到插入点
+		pos=iPos+1;
+		a[iPos+1]=iTemp;//将当前值(较小值的元素)插入
+		fun_sort(pos);		//输出排序结果
+	}//每次将较小值元素插入，即完成了一次排序
+	
+}
+/*-----折半法-----*/
+/*思想：
+*选择一个中间值middle(在程序中使用数组中间值)
+*然后把比中间值小的数据放在左边
+*把比中间值大的数据放在右边(具体的实现是从两边找，找到一对后进行互换)
+*然后对两边分别递归使用这个过程
+*/
+void sort_5(int a[],int left,int right)
+{
+	int i,j,pos;
+	int iTemp,middle;//定义变量，中间值
+	i=left;
+	j=right;
+	middle=a[(left+right)/2];//计算中间值
+	do
+	{
+		
+		while((a[i]<middle)&&(i<right))//从左开始找比中值值小的元素
+		{
+			i++;
+		}
+		while((a[j]>middle)&&(j>left))//从右开始找比中值值大的的元素
+		{
+			j--;
+		}
+		if(i<=j)//找到一对值
+		{
+			pos=i;
+			iTemp=a[j];
+			a[j]=a[i];
+			a[i]=iTemp;
+			i++;
+			j--;
+		}
+	}
+	while(i<=j);//如果下标交错就停止，完成一次排序
+	fun_sort(pos);		//输出排序结果
+	if(j>left)//递归左半边
+		sort_5(a,left,j);
+	if(i<right)//递归右半边
+		sort_5(a,i,right);
+}
+
+void fun_sort(int _mark) 
+/* 
+(void (*f_print_x)(char*,int),
+				void (*f_save_x)(char*[2*M],int,int))*/ 
+{	
+	int i;
+	system("cls");
+
+		for(i=0;i<N;i++)
+		{	
+			save_x(x,i,a[i]) ;	
+						
+			print_x(x,i,_mark);	
+		}
+	Sleep(100);
+	printf("\n");
+}
+
+void choose(int choose_i)
+{
+	switch(choose_i)
+	{
+		case 1:
+			printf("选择法\n");
+			Sleep(1000);
+			sort_1(a,N);
+			saveinitial(aa,xx,1); 
+		break;
+		case 2:
+			printf("冒泡法\n");			
+			Sleep(1000);
+			sort_2(a,N);
+			saveinitial(aa,xx,1);
+		break;
+		case 3:
+			printf("交换法\n");			
+			Sleep(1000);
+			sort_3(a,N);
+			saveinitial(aa,xx,1);
+		break;
+		case 4:
+			printf("插入法\n");
+			Sleep(1000);
+			sort_4(a,N);
+			saveinitial(aa,xx,1);
+		break;
+		case 5:
+			printf("折半法\n");			
+			Sleep(1000);
+			sort_5(a,0,N-1);
+			saveinitial(aa,xx,1);
+		break;			
+	}
+}
+void saveinitial(int aa_[N],char (*xx_)[2*M],int flag)
+{
+	int i,j;
+	if(flag==1)		//若flag为1，则为a，x初始化 
+	{
+		for(i=0;i<N;i++)
+			
+			{
+				a[i]=aa_[i];										
+			}
+			for(i=0;i<N;i++)
+			{
+				strcpy(x[i],xx_[i]);
+			}
+	}
+	else		//否则为aa，xx初始化 
+	{
+		for(i=0;i<N;i++)
+		{
+			aa[i]=aa_[i];								
+		}
+		for(i=0;i<N;i++)
+		{
+			strcpy(xx[i],xx_[i]);
+		 } 
+	}
+}
+	
+	
+	
+	
+ 
